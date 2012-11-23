@@ -20,7 +20,7 @@
         }
 
     },
-    key1 = {}, key2 = { someKey: "someKey" }, value1 = "Some string", value2 = "Another string";
+    key1 = {}, key2 = { someKey: "someKey", getHashCode: function () { return "key"; }}, key3 = {}, key4 = {}, value1 = "Some string", value2 = "Another string";
 
     var hashtable = new jsHash.Hashtable();
 
@@ -29,14 +29,69 @@
         jsHash.Hashtable.stringToHash("This is a long string").should.equal(57784);
     });
 
+    //Prototype functions tests
+
+    it('Initial hashtable should be empty', function () {
+        hashtable.count().should.equal(0);
+    });
+
     it('should add a key, value pair to the hashtable', function () {
         hashtable.add(key1, value1);
         hashtable.count().should.equal(1);
     });
 
-    it('should get a value of key1 from the hash table', function () {
-        hashtable.add(key1, value1);
+    it('should get the value of key1 from the hashtable', function () {
+        var value = hashtable.get(key1);
+        should.exist(value);
+        value.should.equal(value1);
+    });
+
+    it('should not add a key, value pair to the hashtable', function () {
+        hashtable.add(key1, value1, false);
         hashtable.count().should.equal(1);
+    });
+
+    it('should overwrite a give key', function () {
+        hashtable.add(key1, value2, true);
+        hashtable.count().should.equal(1);
+        var value = hashtable.get(key1);
+        should.exist(value);
+        value.should.equal(value2);
+    });
+
+    it('should clear the hashtable', function () {
+        var value;
+        hashtable.clear();
+        hashtable.count().should.equal(0);
+        value = hashtable.get(key1);
+        should.not.exist(value);
+    });
+
+    it('should add multiple keys with the same hash', function () {
+        hashtable.add(key1, "1", false);
+        hashtable.add(key3, "3", false);
+        hashtable.add(key4, "4", false);
+        hashtable.count().should.equal(3);
+        var value = hashtable.get(key3);
+        should.exist(value);
+        value.should.equal("3");
+    });
+
+    it('should remove a value from the hashtable', function () {
+        var value;
+        value = hashtable.remove(key4);
+        value.should.equal(true);
+        value = hashtable.remove(key1);
+        value.should.equal(true);
+        hashtable.count().should.equal(1);
+    });
+
+    it('should check if a hashtable contains a key', function () {
+        var value;
+        value = hashtable.contains(key1);
+        value.should.equal(false);
+        value = hashtable.contains(key3);
+        value.should.equal(true);
     });
 
 

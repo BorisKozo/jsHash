@@ -1,7 +1,12 @@
 var Hashtable = (function () {
 
+    function DataItem(key, value) {
+        this._key = key;
+        this._value = value;
+    }
+
     function Bucket() {
-        this._freeSlots = [];
+        this._freeSlots = []; //TODO: This should be a min-heap
         this._items = [];
     }
 
@@ -10,11 +15,6 @@ var Hashtable = (function () {
         };
         this._count = 0;
         this._options = options;
-    }
-
-    function DataItem(key, value) {
-        this._key = key;
-        this._value = value;
     }
 
     //Static functions
@@ -84,7 +84,7 @@ var Hashtable = (function () {
         equality = Hashtable.getEqual(key, options);
         for (i = 0; i < bucketLength; i++) {
             currentItem = bucket._items[i];
-            if (currentItem !== undefined && equality(currentItem.key, key)) {
+            if (currentItem !== undefined && equality(currentItem._key, key)) {
                 return i;
             }
         }
@@ -107,17 +107,42 @@ var Hashtable = (function () {
         }
     };
 
+    //Makes sure that the key is valid for the hash table
+    Hashtable.verifyKey = function (key) {
+        if (key === undefined || key === null) {
+            throw new Error("Key cannot be undefined or null");
+        }
+
+        return true;
+    }
+
+    //Removes the key from the given bucket. Returns false if the key was not found in the bucket
+    Hashtable.removeKey = function (bucket, key, options) {
+
+        var index = Hashtable.getKeyIndex(bucket, key, options);
+        if (index < 0) {
+            return false;
+        }
+
+        bucket._items[index] = undefined;
+        bucket._freeSlots.push(index);
+
+        return true;
+    }
+
+
     //Prototype functions
 
     ///Adds a key value pair to the hash table, returns true if any item was added and false otherwise.
     ///you may specify the overwriteIfExists flag. When overwriteIfExists is true the value of the given key will be replaced (the key will also be replaced) 
     ///if this key already exists in the hash table. When overwriteIfExists is false and the key already exists then nothing will happen but the 
     ///function will return false (since nothing was added)
-    
+
     Hashtable.prototype.add = function (key, value, overwriteIfExists) {
         var hash, addedItem, bucket, itemIndex;
-        if (key === undefined || key === null) {
-            throw new Error("Key cannot be undefined or null");
+
+        if (!Hashtable.verifyKey) {
+            return false;
         }
 
         hash = Hashtable.getHash(key, this._options).toString();
@@ -140,20 +165,102 @@ var Hashtable = (function () {
         }
     };
 
-    Hashtable.prototype.getValue(key){
+    ///Retrieves the value associated with the given key. If the key doesn't exist null is returned.
+    Hashtable.prototype.get = function (key) {
+        var hash, addedItem, bucket, itemIndex;
 
+        if (!Hashtable.verifyKey) {
+            return false;
+        }
+
+        hash = Hashtable.getHash(key, this._options).toString();
+        if (!this._buckets.hasOwnProperty(hash)) {
+            return null;
+        }
+
+        bucket = this._buckets[hash];
+        itemIndex = Hashtable.getKeyIndex(bucket, key, this._options);
+        if (itemIndex < 0) {
+            return null;
+        }
+
+        return bucket._items[itemIndex]._value;
     }
 
-    Hashtable.prototype.remove = function (key, mustExist) {
+    /// Removes the key-value pair with the given key. Returns false if the key wasn't found in the hash table
+    Hashtable.prototype.remove = function (key) {
+        var hash, bucket, keyRemoved;
+
+        if (!Hashtable.verifyKey) {
+            return false;
+        }
+
+        hash = Hashtable.getHash(key, this._options).toString();
+        if (!this._buckets.hasOwnProperty(hash)) {
+            return false;
+        }
+
+        bucket = this._buckets[hash];
+        keyRemoved = Hashtable.removeKey(bucket, key, this._options);
+        if (keyRemoved) {
+            this._count--;
+        }
+        return keyRemoved;
+
     };
 
-    Hashtable.prototype.containsKey = function (key) {
+    /// Returns true if the hash table contains the key and false otherwise
+    Hashtable.prototype.contains = function (key) {
+        var hash, addedItem, bucket, itemIndex;
+
+        if (!Hashtable.verifyKey) {
+            return false;
+        }
+
+        hash = Hashtable.getHash(key, this._options).toString();
+        if (!this._buckets.hasOwnProperty(hash)) {
+            return false;
+        }
+
+        bucket = this._buckets[hash];
+        itemIndex = Hashtable.getKeyIndex(bucket, key, this._options);
+        if (itemIndex < 0) {
+            return false;
+        }
         return true;
     };
 
+    ///Returns the total number of items in the hashtable
     Hashtable.prototype.count = function () {
         return this._count;
     };
+
+    ///Returns the total number of items in the hashtable
+    Hashtable.prototype.clear = function () {
+        this._count = 0;
+        this._buckets = {};
+    };
+
+    ///Prints the content of the hashtable to the console. This is used for debugging
+    Hashtable.prototype.print = function () {
+        var hash, bucket, i, length;
+        console.log("Count: ", this._count);
+        for (hash in this._buckets) {
+            console.log("*");
+            console.log("Bucket:", hash);
+            bucket = this._buckets[hash];
+            console.log("Free Slots:", bucket._freeSlots);
+            length = bucket._items.length
+            console.log("There are", length, "item slots");
+            for (i = 0; i < length; i++) {
+                if (bucket._items[i] === undefined) {
+                    console.log("  ",i, ":", undefined);
+                } else {
+                    console.log("  ", i, ":", "Key:", bucket._items[i]._key, "Value:", bucket._items[i]._value);
+                }
+            }
+        }
+    }
 
     return Hashtable;
 })();
