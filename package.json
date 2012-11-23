@@ -1,0 +1,11 @@
+{
+    "name": "js-hash",
+	"version" : "0.0.1",
+    "description": "A package implementing a 'real' Hashtable and Hashset",
+    "author": "Boris Kozorovitzky",
+    "devDependencies": {
+        "mocha": "1.7.0",
+		"should":"1.2.1"
+    },
+    "engine": "node >= 0.8.14"
+}
