@@ -5,11 +5,6 @@ var Hashtable = (function () {
         this._value = value;
     }
 
-    function Bucket() {
-        this._freeSlots = []; //TODO: This should be a min-heap
-        this._items = [];
-    }
-
     function Hashtable(options) {
         this._buckets = {
         };
@@ -77,13 +72,13 @@ var Hashtable = (function () {
         }
     }
 
-    //Searches the given key within the given bucket. If the key is found then returns the index in the _items array,
+    //Searches the given key within the given bucket. If the key is found then returns the index in the bucket,
     //otherwise returns -1
     Hashtable.getKeyIndex = function (bucket, key, options) {
-        var i, bucketLength = bucket._items.length, equality, currentItem;
+        var i, bucketLength = bucket.length, equality, currentItem;
         equality = Hashtable.getEqual(key, options);
         for (i = 0; i < bucketLength; i++) {
-            currentItem = bucket._items[i];
+            currentItem = bucket[i];
             if (currentItem !== undefined && equality(currentItem._key, key)) {
                 return i;
             }
@@ -94,17 +89,7 @@ var Hashtable = (function () {
 
     ///A static function that adds the given key value pair to the given bucket
     Hashtable.addToBucket = function (bucket, key, value, options) {
-        var i, bucketLength, freeIndex, item = new DataItem(key, value);
-
-        //The bucket has no free slots from previous deletions, add at the end of the items;
-        if (bucket._freeSlots.length === 0) {
-            bucket._items.push(item);
-
-        } else {
-            //The bucket has some free slots!
-            freeIndex = bucket._freeSlots.pop();
-            bucket._items[freeIndex] = item;
-        }
+        bucket.push(new DataItem(key, value));
     };
 
     //Makes sure that the key is valid for the hash table
@@ -118,15 +103,16 @@ var Hashtable = (function () {
 
     //Removes the key from the given bucket. Returns false if the key was not found in the bucket
     Hashtable.removeKey = function (bucket, key, options) {
-
-        var index = Hashtable.getKeyIndex(bucket, key, options);
+        var index = Hashtable.getKeyIndex(bucket, key, options), bucketLength = bucket.length;
         if (index < 0) {
             return false;
         }
 
-        bucket._items[index] = undefined;
-        bucket._freeSlots.push(index);
+        if (bucketLength > 1 && index !== (bucketLength - 1)) {
+            bucket[index] = bucket[bucketLength - 1];
+        }
 
+        bucket.length = bucketLength - 1;
         return true;
     }
 
@@ -147,13 +133,13 @@ var Hashtable = (function () {
 
         hash = Hashtable.getHash(key, this._options).toString();
         if (!this._buckets.hasOwnProperty(hash)) {
-            this._buckets[hash] = new Bucket();
+            this._buckets[hash] = [];
         }
         bucket = this._buckets[hash];
         itemIndex = Hashtable.getKeyIndex(bucket, key, this._options);
         if (itemIndex >= 0) {
             if (overwriteIfExists) {
-                bucket._items[itemIndex] = new DataItem(key, value);
+                bucket[itemIndex] = new DataItem(key, value);
                 return true;
             }
 
@@ -184,7 +170,10 @@ var Hashtable = (function () {
             return null;
         }
 
-        return bucket._items[itemIndex]._value;
+        return {
+            value: bucket[itemIndex]._value,
+            key: bucket[itemIndex]._value
+        };
     }
 
     /// Removes the key-value pair with the given key. Returns false if the key wasn't found in the hash table
@@ -230,6 +219,36 @@ var Hashtable = (function () {
         return true;
     };
 
+    ///Returns all the hashes that are currently in the hashtable
+    Hashtable.prototype.getHashes = function () {
+        var result = [], hash;
+        for (hash in this._buckets) {
+            if (this._buckets.hasOwnProperty(hash) && this._buckets[hash].length > 0) {
+                result.push(hash);
+            }
+        }
+
+        return result;
+    }
+
+    ///Returns an array of all the key-value pairs in the hashtable
+    Hashtable.prototype.getKeyValuePairs = function () {
+        var result = [], hash, bucket, i, bucketLength;
+        for (hash in this._buckets) {
+            if (this._buckets.hasOwnProperty(hash)) {
+                bucket = this._buckets[hash];
+                for (i = 0, bucketLength = bucket.length; i < bucketLength; i++) {
+                    result.push({
+                        key: bucket[i]._key,
+                        value: bucket[i]._value
+                    });
+                }
+            }
+        }
+
+        return result;
+    }
+
     ///Returns the total number of items in the hashtable
     Hashtable.prototype.count = function () {
         return this._count;
@@ -246,17 +265,19 @@ var Hashtable = (function () {
         var hash, bucket, i, length;
         console.log("Count: ", this._count);
         for (hash in this._buckets) {
+            if (!this._buckets.hasOwnProperty(hash)) {
+                continue;
+            }
             console.log("*");
             console.log("Bucket:", hash);
             bucket = this._buckets[hash];
-            console.log("Free Slots:", bucket._freeSlots);
-            length = bucket._items.length
+            length = bucket.length;
             console.log("There are", length, "item slots");
             for (i = 0; i < length; i++) {
-                if (bucket._items[i] === undefined) {
-                    console.log("  ",i, ":", undefined);
+                if (bucket[i] === undefined) {
+                    console.log("  ", i, ":", undefined);
                 } else {
-                    console.log("  ", i, ":", "Key:", bucket._items[i]._key, "Value:", bucket._items[i]._value);
+                    console.log("  ", i, ":", "Key:", bucket[i]._key, "Value:", bucket[i]._value);
                 }
             }
         }

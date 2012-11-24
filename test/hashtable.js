@@ -41,7 +41,7 @@
     });
 
     it('should get the value of key1 from the hashtable', function () {
-        var value = hashtable.get(key1);
+        var value = hashtable.get(key1).value;
         should.exist(value);
         value.should.equal(value1);
     });
@@ -54,7 +54,7 @@
     it('should overwrite a give key', function () {
         hashtable.add(key1, value2, true);
         hashtable.count().should.equal(1);
-        var value = hashtable.get(key1);
+        var value = hashtable.get(key1).value;
         should.exist(value);
         value.should.equal(value2);
     });
@@ -72,7 +72,7 @@
         hashtable.add(key3, "3", false);
         hashtable.add(key4, "4", false);
         hashtable.count().should.equal(3);
-        var value = hashtable.get(key3);
+        var value = hashtable.get(key3).value;
         should.exist(value);
         value.should.equal("3");
     });
@@ -92,6 +92,28 @@
         value.should.equal(false);
         value = hashtable.contains(key3);
         value.should.equal(true);
+    });
+
+    it('should add multiple hash codes', function () {
+        hashtable.add(key2, "2", false);
+        hashtable.count().should.equal(2);
+        var value = hashtable.get(key2).value;
+        should.exist(value);
+        value.should.equal("2");
+    });
+
+    it('should get all the hashes in the hashtable', function () {
+        var hashes = hashtable.getHashes();
+        should.exist(hashes);
+        hashes.length.should.equal(2);
+    });
+
+    it('should get all the key-value pairs in the hashtable', function () {
+        var keyValuePairs = hashtable.getKeyValuePairs();
+        should.exist(keyValuePairs);
+        keyValuePairs.length.should.equal(2);
+        keyValuePairs[0].key.should.equal(key3); //Not so robust :(
+        keyValuePairs[0].value.should.equal("3");
     });
 
 
