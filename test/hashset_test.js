@@ -33,29 +33,27 @@ describe('HashSet', function () {
     });
 
     it('should add a key, value pair to the HashSet', function () {
-        hashset.add(key1, value1);
+        hashset.add(key1);
         hashset.count().should.equal(1);
     });
 
-    it('should get the value of key1 from the HashSet', function () {
+    it('should get key1 from the HashSet', function () {
         var data = hashset.get(key1);
-        should.exist(data.value);
-        data.value.should.equal(value1);
-        should.exist(data.key);
-        data.key.should.equal(key1);
+        should.exist(data);
+        data.should.equal(key1);
     });
 
     it('should not add a key, value pair to the HashSet', function () {
-        hashset.add(key1, value1, false);
+        hashset.add(key1, false);
         hashset.count().should.equal(1);
     });
 
-    it('should overwrite a give key', function () {
-        hashset.add(key1, value2, true);
+    it('should overwrite a given key', function () {
+        hashset.add(key1, true);
         hashset.count().should.equal(1);
-        var value = hashset.get(key1).value;
-        should.exist(value);
-        value.should.equal(value2);
+        var data = hashset.get(key1);
+        should.exist(data);
+        data.should.equal(key1);
     });
 
     it('should clear the HashSet', function () {
@@ -67,9 +65,9 @@ describe('HashSet', function () {
     });
 
     it('should add keys with different hashes', function () {
-        hashset.add(key1, "1");
+        hashset.add(key1);
         hashset.count().should.equal(1);
-        hashset.add(key2, "2");
+        hashset.add(key2);
         hashset.count().should.equal(2);
     });
 
@@ -90,31 +88,29 @@ describe('HashSet', function () {
 
     it('should get all the hashes in the HashSet', function () {
         var hashes;
-        hashset.add(key1, "1");
+        hashset.add(key1);
         hashes = hashset.getHashes();
         should.exist(hashes);
         hashes.length.should.equal(2);
     });
 
-    it('should get all the key-value pairs in the HashSet', function () {
-        var keyValuePairs = hashset.getKeyValuePairs();
-        should.exist(keyValuePairs);
-        keyValuePairs.length.should.equal(2);
-        keyValuePairs[1].key.should.equal(key1); //Not so robust :(
-        keyValuePairs[1].value.should.equal("1");
+    it('should get all the keys in the HashSet', function () {
+        var keys = hashset.getKeys();
+        should.exist(keys);
+        keys.length.should.equal(2);
+        keys[1].should.equal(key1); //Not so robust :(
     });
 
     it('should clone a HashSet', function () {
         var otherSet = hashset.clone(), value;
-        hashset.print();
-        otherSet.print();
         value = otherSet.contains(key3);
         value.should.equal(false);
         value = otherSet.contains(key2);
         value.should.equal(true);
-        value = otherSet.get(key2).value;
+        value = otherSet.get(key2);
         should.exist(value);
-        value.should.equal("2");
+        value.should.equal(key2);
+        otherSet.count().should.equal(hashset.count());
     });
 
 

@@ -129,6 +129,7 @@ describe('HashTable', function () {
         value = otherTable.get(key2).value;
         should.exist(value);
         value.should.equal("2");
+        otherTable.count().should.equal(hashtable.count());
     });
 
 

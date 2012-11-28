@@ -284,6 +284,7 @@ var HashTable = (function () {
     HashTable.prototype.clone = function () {
         var result = new HashTable(statics.copyOptions(this._options)),
         hash, bucket, newBucket, i, bucketLength;
+        result._count = this._count;
         for (hash in this._buckets) {
             if (this._buckets.hasOwnProperty(hash)) {
                 bucket = this._buckets[hash];
@@ -355,7 +356,7 @@ var HashSet = (function () {
         equality = statics.getEqual(key, options);
         for (i = 0; i < bucketLength; i += 1) {
             currentItem = bucket[i];
-            if (currentItem !== undefined && equality(currentItem._key, key)) {
+            if (currentItem !== undefined && equality(currentItem, key)) {
                 return i;
             }
         }
@@ -371,7 +372,7 @@ var HashSet = (function () {
 
     //Removes the key from the given bucket. Returns false if the key was not found in the bucket
     HashSet.removeKey = function (bucket, key, options) {
-        var index = HashTable.getKeyIndex(bucket, key, options), bucketLength = bucket.length;
+        var index = HashSet.getKeyIndex(bucket, key, options), bucketLength = bucket.length;
         if (index < 0) {
             return false;
         }
@@ -404,7 +405,7 @@ var HashSet = (function () {
             this._buckets[hash] = [];
         }
         bucket = this._buckets[hash];
-        itemIndex = HashTable.getKeyIndex(bucket, key, this._options);
+        itemIndex = HashSet.getKeyIndex(bucket, key, this._options);
         if (itemIndex >= 0) {
             if (overwriteIfExists) {
                 bucket[itemIndex] = key;
@@ -413,14 +414,14 @@ var HashSet = (function () {
 
             return false;
         } else {
-            addedItem = HashTable.addToBucket(this._buckets[hash], key, this._options);
+            addedItem = HashSet.addToBucket(this._buckets[hash], key, this._options);
             this._count += 1;
             return true;
         }
     };
 
     ///Retrieves the key which is equal to the given key. If the key doesn't exist null is returned.
-    HashTable.prototype.get = function (key) {
+    HashSet.prototype.get = function (key) {
         var hash, bucket, itemIndex;
 
         if (!statics.verifyKey) {
@@ -431,9 +432,9 @@ var HashSet = (function () {
         if (!this._buckets.hasOwnProperty(hash)) {
             return null;
         }
-
+        
         bucket = this._buckets[hash];
-        itemIndex = HashTable.getKeyIndex(bucket, key, this._options);
+        itemIndex = HashSet.getKeyIndex(bucket, key, this._options);
         if (itemIndex < 0) {
             return null;
         }
@@ -455,7 +456,7 @@ var HashSet = (function () {
         }
 
         bucket = this._buckets[hash];
-        keyRemoved = HashTable.removeKey(bucket, key, this._options);
+        keyRemoved = HashSet.removeKey(bucket, key, this._options);
         if (keyRemoved) {
             this._count -= 1;
             if (bucket.length === 0) {
@@ -480,7 +481,7 @@ var HashSet = (function () {
         }
 
         bucket = this._buckets[hash];
-        itemIndex = HashTable.getKeyIndex(bucket, key, this._options);
+        itemIndex = HashSet.getKeyIndex(bucket, key, this._options);
         if (itemIndex < 0) {
             return false;
         }
@@ -529,6 +530,7 @@ var HashSet = (function () {
     HashSet.prototype.clone = function () {
         var result = new HashSet(statics.copyOptions(this._options)),
         hash, bucket, newBucket, i, bucketLength;
+        result._count = this._count;
         for (hash in this._buckets) {
             if (this._buckets.hasOwnProperty(hash)) {
                 bucket = this._buckets[hash];
@@ -537,14 +539,14 @@ var HashSet = (function () {
                 newBucket.length = bucketLength;
                 result._buckets[hash] = newBucket;
                 for (i = 0; i < bucketLength; i += 1) {
-                    newBucket[i] = bucket[i]._key;
+                    newBucket[i] = bucket[i];
                 }
             }
         }
         return result;
     };
 
-    ///Returns a new HashSet where all the key value pairs are rehashed according to the new options
+    ///Returns a new HashSet where all the keys are rehashed according to the new options
     HashSet.prototype.rehash = function (options, overwriteIfExists) {
         var result = new HashSet(options),
          keys = this.getKeys(),
