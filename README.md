@@ -10,7 +10,6 @@ $ npm install hashes
 ```
 
 ##API
-Currently only a hashtable is implemented.
 
 To use the module in your code simply type
 
@@ -31,25 +30,29 @@ You may provide an optional argument to the constructor called _options_. The op
 
 * **equal(first, second)** - Returns true if the given arguments are equal, and false otherwise.
 
-The options object is used throughout the diffrent API calls. The API of the hashtable is therefore:
+The options object is used throughout the different API calls. The API of the HashTable is therefore:
 
-* **add(key, value, [overwriteIfExists])** - Adds the given key-value pair to the hashtable. _overwriteIfExists_ is an optional argument that is used when the given key already exists in the hashtable.
-If _overwriteIfExists_ is truthy then the given key-value pair will overwrite the existing key-value pair, otherwise the given key-value pair will not be added to the hashtable.
+* **add(key, value, [overwriteIfExists])** - Adds the given key-value pair to the HashTable. _overwriteIfExists_ is an optional argument that is used when the given key already exists in the HashTable.
+If _overwriteIfExists_ is truthy then the given key-value pair will overwrite the existing key-value pair, otherwise the given key-value pair will not be added to the HashTable.
 
 * **get(key)** - Returns the key-value pair associated with the given key. If there is no key-value pair associated with the given key, null is returned. The returned object is ```{key:key, value:value}```.
-(Note that a pair is returned because the key in the hashtable may differ from the provided key.)
+(Note that a pair is returned because the key in the HashTable may differ from the provided key.)
 
-* **remove(key)** - Removes the key-value pair associated with the given key from the hashtable. Returns true if a key-value pair was removed and false otherwise (e.g. when there is no value associated with the given key).
+* **remove(key)** - Removes the key-value pair associated with the given key from the HashTable. Returns true if a key-value pair was removed and false otherwise (e.g. when there is no value associated with the given key).
 
 * **contains(key)** - Returns true if there is a value associated with the given key and false otherwise.
 
-* **getHashes()** - Returns a string array of all the hashes that are currently in the hashtable.
+* **getHashes()** - Returns a string array of all the hashes that are currently in the HashTable.
 
-* **getKeyValuePairs()** - Returns an array of all the key-value pairs in the hashtable **in no particular order**. Each object in the returned array is ```{key:key, value:value}```.
+* **getKeyValuePairs()** - Returns an array of all the key-value pairs in the HashTable **in no particular order**. Each object in the returned array is ```{key:key, value:value}```.
 
-* **count()** - Returns the number of key-value pairs in the hashtable.
+* **count()** - Returns the number of key-value pairs in the HashTable.
 
-* **clear()** - Removes all the key-value pairs from the hashtable.
+* **clear()** - Removes all the key-value pairs from the HashTable.
+
+* **clone()** - Returns a copy of the HashTable. All user elements are copied by reference.
+
+* **rehash(options, overwriteIfExists)** - Returns a copy of the HashTable but all the key-value pairs are re-insrted using the new options. _overwriteIfExists_ is handled the same way as in the _add_ function.
 
 ## Contributions
 Please feel free to contribute code to this module. Make sure that the contributed code is in the spirit of the existing code.
@@ -59,6 +62,16 @@ Thanks!
 ## Test
 The module uses [Mocha](http://visionmedia.github.com/mocha/) testing framework for all the tests. To run the tests simply type
 ```mocha``` in a command line while in the module main directory.
+
+## Change Log
+0.0.2 -> 0.1.0
+* **Breaking** - Renamed the class from Hashtable to HashTable (note the capital 'T')
+* **Breaking** - Moved some static functions of HashTable class to the statics object to accommodate the new HashSet class
+* Added the HashSet class
+* Added the _clone_ and _rehash_ functions to the HashTable class
+* Fixed a bug in the get method where the key was not returned
+* Fixed some global leaks
+* Fixed some other code issues that jsHint didn't like
 
 ## License
 

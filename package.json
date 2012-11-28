@@ -1,9 +1,9 @@
 {
     "name": "hashes",
-	"version" : "0.0.2",
-    "description": "A package implementing a 'real' Hashtable and (soon) Hashset",
+	"version" : "0.1.0",
+    "description": "A package implementing a HashTable and HashSet",
     "author": "Boris Kozorovitzky",
-	"main":"hashtable.js",
+	"main":"hashes.js",
 	"keywords":[
 		"hashtable",
 		"datastructures",
