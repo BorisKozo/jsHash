@@ -23,6 +23,21 @@ describe('HashTable', function () {
         },
     key1 = {}, key2 = { someKey: "someKey", getHashCode: function () { return "key"; } }, key3 = {}, key4 = {},
     value1 = "Some string", value2 = "Another string",
+    keyValuePairs = [
+    {
+        key:"a",
+        value:"b"
+    },
+    {
+        key:"a",
+        value:"c"
+    },
+    {
+        key:"b",
+        value:"d"
+    }
+    ],
+
 
     hashtable = new jsHash.HashTable();
 
@@ -51,12 +66,12 @@ describe('HashTable', function () {
     });
 
     it('should not add a key, value pair to the HashTable', function () {
-        hashtable.add(key1, value1, false);
+        hashtable.add(key1, value1, false).should.equal(false);
         hashtable.count().should.equal(1);
     });
 
     it('should overwrite a give key', function () {
-        hashtable.add(key1, value2, true);
+        hashtable.add(key1, value2, true).should.equal(true);
         hashtable.count().should.equal(1);
         var value = hashtable.get(key1).value;
         should.exist(value);
@@ -134,5 +149,24 @@ describe('HashTable', function () {
 
 
 
+    it('should add a range of elements', function () {
+        var count;
+        hashtable.clear();
+        count = hashtable.addRange(keyValuePairs);
+        count.should.equal(2);
+        hashtable.count().should.equal(2);
+        hashtable.get(keyValuePairs[0].key).value.should.equal("b");
+        
+        hashtable.clear();
+        count = hashtable.addRange(keyValuePairs,false);
+        count.should.equal(2);
+        hashtable.count().should.equal(2);
+        hashtable.get(keyValuePairs[0].key).value.should.equal("b");
 
+        hashtable.clear();
+        count = hashtable.addRange(keyValuePairs, true);
+        count.should.equal(3);
+        hashtable.count().should.equal(2);
+        hashtable.get(keyValuePairs[0].key).value.should.equal("c");
+    });
 });

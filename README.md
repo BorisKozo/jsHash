@@ -51,7 +51,17 @@ var myHashTable = new hashes.HashTable();
 * **HashTable([options])** - Creates a new instance of the HashTable object. An optional _options_ argument can be provided (see above).
 
 * **add(key, value, [overwriteIfExists])** - Adds the given key-value pair to the HashTable. _overwriteIfExists_ is an optional argument that is used when the given key already exists in the HashTable.
-If _overwriteIfExists_ is truthy then the given key-value pair will overwrite the existing key-value pair, otherwise the given key-value pair will not be added to the HashTable.
+If _overwriteIfExists_ is truthy then the given key-value pair will overwrite the existing key-value pair, otherwise the given key-value pair will not be added to the HashTable. Returns true if the HashTable was modified and false otherwise.
+
+* **addRange(keys, values, [overwriteIfExists])** - Adds the given keys and values as key-value pairs to the HashTable. If the length of the two arguments is different, the minimum length is used. 
+_overwriteIfExists_ is an optional argument that is used when the given key already exists in the HashTable.
+If _overwriteIfExists_ is truthy then the given key-value pair will overwrite the existing key-value pair, otherwise the given key-value pair will not be added to the HashTable. 
+Returns the number of key-value pairs that were added to the HashTable.
+
+* **addRange(keyValuePairs, [overwriteIfExists])** - Adds the given key-value pairs to the HashTable (each object in the given collection must contain a _key_ and a _value_ property). 
+_overwriteIfExists_ is an optional argument that is used when the given key already exists in the HashTable.
+If _overwriteIfExists_ is truthy then the given key-value pair will overwrite the existing key-value pair, otherwise the given key-value pair will not be added to the HashTable. 
+Returns the number of key-value pairs that were added to the HashTable.
 
 * **get(key)** - Returns the key-value pair associated with the given key. If there is no key-value pair associated with the given key, null is returned. The returned object is ```{key:key, value:value}```.
 (Note that a pair is returned because the key in the HashTable may differ from the provided key.)
@@ -117,7 +127,13 @@ The module uses [Mocha](http://visionmedia.github.com/mocha/) testing framework 
 ```mocha``` in a command line while in the module main directory.
 
 ## ChangeLog
+0.1.0 -> 0.1.1
+
+* Added the addRange functions
+* Minor documentation fixes
+
 0.0.2 -> 0.1.0
+
 * **Breaking** - Renamed the class from Hashtable to HashTable (note the capital 'T')
 * **Breaking** - Moved some static functions of HashTable class to the statics object to accommodate the new HashSet class
 * Added the HashSet class

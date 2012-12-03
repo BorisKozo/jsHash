@@ -168,6 +168,33 @@ var HashTable = (function () {
         }
     };
 
+    ///Adds a collection of keys and values to the HashTable, returns the number of items added.
+    ///There are two possible uses:
+    ///1) addRange(keyValuePairs,[overwriteIfExists]) - provide a collection of objects that have key and value property and an optional overwriteIfExists argument (see add for details)
+    ///2) addRange(keys, values, [overwriteIfExists]) - provide two collections (one of keys and the other of values) and an optional overwriteIfExists argument (see add for details)
+    HashTable.prototype.addRange = function (arg1, arg2, arg3) {
+
+        var i, keysLength, valuesLength, minLength, result = 0;
+        if (arguments.length === 1 || (arguments.length === 2 && typeof (arguments[1]) === "boolean")) {
+            for (i = 0, keysLength = arg1.length; i < keysLength; i += 1) {
+                if (this.add(arg1[i].key, arg1[i].value, arg2)) {
+                    result += 1;
+                }
+            }
+        } else {
+            keysLength = arg1.length;
+            valuesLength = arg2.length;
+            minLength = Math.min(keysLength, valuesLength);
+            for (i = 0; i < minLength; i += 1) {
+                if (this.add(arg1[i], arg2[i], arg3)) {
+                    result += 1;
+                }
+            }
+        }
+
+        return result;
+    };
+
     ///Retrieves the value associated with the given key. If the key doesn't exist null is returned.
     HashTable.prototype.get = function (key) {
         var hash, bucket, itemIndex;
@@ -432,7 +459,7 @@ var HashSet = (function () {
         if (!this._buckets.hasOwnProperty(hash)) {
             return null;
         }
-        
+
         bucket = this._buckets[hash];
         itemIndex = HashSet.getKeyIndex(bucket, key, this._options);
         if (itemIndex < 0) {
