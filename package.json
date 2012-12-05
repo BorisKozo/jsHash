@@ -1,6 +1,6 @@
 {
     "name": "hashes",
-	"version" : "0.1.0",
+	"version" : "0.1.1",
     "description": "A package implementing a HashTable and HashSet",
     "author": "Boris Kozorovitzky",
 	"main":"hashes.js",

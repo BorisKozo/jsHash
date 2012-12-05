@@ -82,6 +82,13 @@ Returns the number of key-value pairs that were added to the HashTable.
 
 * **rehash(options, overwriteIfExists)** - Returns a copy of the HashTable but all the key-value pairs are re-insrted using the new options. _overwriteIfExists_ is handled the same way as in the _add_ function.
 
+#### Static Functions
+
+* **[static] union(first, second, [options], [overwriteIfExists])** - Creates a new HashTable which is a union of the first and second HashTables. 
+You may specify an optional _options_ parameter and an optional _overwriteIfExists_ parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+When _overwriteIfExists_ is true and a key from the second HashTable already exists in the first HashTable the entire key-value pair is overwritten in the result. 
+If _overwriteIfExists_ is false then the key-value pair from the second HashTable is ignored.
+
 ###HashSet
 To create a new HashSet use the _new_ keyword:
 
@@ -93,6 +100,11 @@ var myHashSet = new hashes.HashSet();
 
 * **add(key, [overwriteIfExists])** - Adds the given key to the HashSet. _overwriteIfExists_ is an optional argument that is used when the given key already exists in the HashSet.
 If _overwriteIfExists_ is truthy then the given key will overwrite the existing key, otherwise the given key is ignored.
+
+* **addRange(keys, [overwriteIfExists])** - Adds the given keys to the HashSet. 
+_overwriteIfExists_ is an optional argument that is used when the given key already exists in the HashSet.
+If _overwriteIfExists_ is truthy then the given key will overwrite the existing key, otherwise the given key pair will not be added to the HashSet. 
+Returns the number of keys that were added to the HashSet.
 
 * **get(key)** - Returns the key in the HashSet which is equal to the given key. If there is no key equal to the given key, null is returned.
 
@@ -112,6 +124,14 @@ If _overwriteIfExists_ is truthy then the given key will overwrite the existing 
 
 * **rehash(options, overwriteIfExists)** - Returns a copy of the HashSet but all the keys  are re-insrted using the new options. _overwriteIfExists_ is handled the same way as in the _add_ function.
 
+
+#### Static Functions
+
+* **[static] union(first, second, [options], [overwriteIfExists])** - Creates a new HashSet which is a union of the first and second HashSets. 
+You may specify an optional _options_ parameter and an optional _overwriteIfExists_ parameter. The options are used to create the result HashSet and all the keys added accordingly.
+When _overwriteIfExists_ is true and a key from the second HashSet already exists in the first HashTable it will be overwritten in the result. 
+If _overwriteIfExists_ is false then the key is ignored.
+
 ###statics
 The _statics_ object is used internally to control the behavior of **all** the HashTable and HashSet instances.
 You may override the functions of this object but this is an advanced use case.
@@ -130,7 +150,9 @@ The module uses [Mocha](http://visionmedia.github.com/mocha/) testing framework 
 0.1.0 -> 0.1.1
 
 * Added the addRange functions
+* Added static union functions
 * Minor documentation fixes
+* Fixed a bug where options argument had to include both getHashCode and equal functions
 
 0.0.2 -> 0.1.0
 

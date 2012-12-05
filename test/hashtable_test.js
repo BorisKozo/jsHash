@@ -25,18 +25,21 @@ describe('HashTable', function () {
     value1 = "Some string", value2 = "Another string",
     keyValuePairs = [
     {
-        key:"a",
-        value:"b"
+        key: "a",
+        value: "b"
     },
     {
-        key:"a",
-        value:"c"
+        key: "a",
+        value: "c"
     },
     {
-        key:"b",
-        value:"d"
+        key: "b",
+        value: "d"
     }
-    ],
+    ], keys = ["a", "b", "c", "a", "k"],
+    values = ["d", "e", "f", "g"],
+
+
 
 
     hashtable = new jsHash.HashTable();
@@ -156,9 +159,9 @@ describe('HashTable', function () {
         count.should.equal(2);
         hashtable.count().should.equal(2);
         hashtable.get(keyValuePairs[0].key).value.should.equal("b");
-        
+
         hashtable.clear();
-        count = hashtable.addRange(keyValuePairs,false);
+        count = hashtable.addRange(keyValuePairs, false);
         count.should.equal(2);
         hashtable.count().should.equal(2);
         hashtable.get(keyValuePairs[0].key).value.should.equal("b");
@@ -168,5 +171,44 @@ describe('HashTable', function () {
         count.should.equal(3);
         hashtable.count().should.equal(2);
         hashtable.get(keyValuePairs[0].key).value.should.equal("c");
+    });
+
+    it('should add a range of elements 2', function () {
+        var count;
+        hashtable.clear();
+        count = hashtable.addRange(keys, values);
+        count.should.equal(3);
+        hashtable.count().should.equal(3);
+        hashtable.get(keyValuePairs[0].key).value.should.equal("d");
+
+        hashtable.clear();
+        count = hashtable.addRange(keys, values, false);
+        count.should.equal(3);
+        hashtable.count().should.equal(3);
+        hashtable.get(keyValuePairs[0].key).value.should.equal("d");
+
+        hashtable.clear();
+        count = hashtable.addRange(keys, values, true);
+        count.should.equal(4);
+        hashtable.count().should.equal(3);
+        hashtable.get(keyValuePairs[0].key).value.should.equal("g");
+    });
+
+    it('should union two HashTables using the static method', function () {
+        var hashtable1 = new jsHash.HashTable(),
+            hashtable2 = new jsHash.HashTable(),
+            result;
+        hashtable1.add("a", "b");
+        hashtable2.add("c", "d");
+        result = jsHash.HashTable.union(hashtable1, hashtable2);
+        should.exist(result);
+        result.count().should.equal(2);
+        result.get("a").value.should.equal("b");
+        result.get("c").value.should.equal("d");
+        hashtable2.add("a", "e");
+        result = jsHash.HashTable.union(hashtable1, hashtable2, {}, true);
+        result.count().should.equal(2);
+        result.get("a").value.should.equal("e");
+        result.get("c").value.should.equal("d");
     });
 });

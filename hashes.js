@@ -1,4 +1,5 @@
 
+//A key-value pair constructor function for internal use
 var KeyValuePair = function (key, value) {
     this._key = key;
     this._value = value;
@@ -77,10 +78,15 @@ var statics = (function () {
                 return undefined;
             }
 
-            return {
-                getHashCode: options.getHashCode,
-                equal: options.equal
-            };
+            var result = {};
+            if (options.hasOwnProperty("getHashCode")){
+                result.getHashCode = options.getHashCode;
+            }
+            if (options.hasOwnProperty("equal")) {
+                result.equal = options.equal;
+            }
+
+            return result;
         }
     };
 
@@ -133,6 +139,22 @@ var HashTable = (function () {
         return true;
     };
 
+    ///Creates a new HashTable which is a union of the first and second HashTables. You may specify an optional options parameter and
+    ///an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+    //When overwriteIfExists is true and a key from the second HashTable already exists in the first HashTable the entire key-value pair will be overwritten in the result. 
+    ///If overwriteIfExists is false then the key-value pair is ignored.
+    HashTable.union = function (first, second, options, overwriteIfExists) {
+        var result = new HashTable(options),
+            keyValuePairs;
+
+        keyValuePairs = first.getKeyValuePairs();
+        result.addRange(keyValuePairs, overwriteIfExists);
+        keyValuePairs = second.getKeyValuePairs();
+        result.addRange(keyValuePairs, overwriteIfExists);
+
+        return result;
+    };
+
 
     //Prototype functions
 
@@ -175,7 +197,7 @@ var HashTable = (function () {
     HashTable.prototype.addRange = function (arg1, arg2, arg3) {
 
         var i, keysLength, valuesLength, minLength, result = 0;
-        if (arguments.length === 1 || (arguments.length === 2 && typeof (arguments[1]) === "boolean")) {
+        if (arguments.length === 1 || (arguments.length === 2 && (typeof (arguments[1]) === "boolean" || arguments[1] === undefined))) {
             for (i = 0, keysLength = arg1.length; i < keysLength; i += 1) {
                 if (this.add(arg1[i].key, arg1[i].value, arg2)) {
                     result += 1;
@@ -412,14 +434,28 @@ var HashSet = (function () {
         return true;
     };
 
+    ///Creates a new HashSet which is a union of the first and second HashSet. You may specify an optional options parameter and
+    ///an optional overwriteIfExists parameter. The options are used to create the result HashSet and all the keys added accordingly.
+    //When overwriteIfExists is true and a key from the second HashSet already exists in the first HashTable it will be overwritten in the result. 
+    ///If overwriteIfExists is false then the key is ignored.
+    HashSet.union = function (first, second, options, overwriteIfExists) {
+        var result = new HashSet(options),
+            keys;
+
+        keys = first.getKeys();
+        result.addRange(keys, overwriteIfExists);
+        keys = second.getKeys();
+        result.addRange(keys);
+
+        return result;
+    };
 
     //Prototype functions
 
-    ///Adds a key the HashSet, returns true if any item was added and false otherwise.
+    ///Adds a key to the HashSet, returns true if any item was added and false otherwise.
     ///you may specify the overwriteIfExists flag. When overwriteIfExists is true the key will be replaced
     ///if this key already exists in the HashSet. When overwriteIfExists is false and the key already exists then nothing 
     ///will happen but the function will return false (since nothing was added)
-
     HashSet.prototype.add = function (key, overwriteIfExists) {
         var hash, addedItem, bucket, itemIndex;
 
@@ -445,6 +481,21 @@ var HashSet = (function () {
             this._count += 1;
             return true;
         }
+    };
+
+    ///Adds a collection of keys to the HashSet, returns the number of keys added.
+    ///you may specify the overwriteIfExists flag. When overwriteIfExists is true the key will be replaced
+    ///if this key already exists in the HashSet. When overwriteIfExists is false and the key already exists then nothing 
+    ///will happen.
+    HashSet.prototype.addRange = function (keys, overwriteIfExists) {
+        var i, length, result = 0;
+        for (i = 0, length = keys.length; i < length; i += 1) {
+            if (this.add(keys[i], overwriteIfExists)) {
+                result += 1;
+            }
+        }
+
+        return result;
     };
 
     ///Retrieves the key which is equal to the given key. If the key doesn't exist null is returned.

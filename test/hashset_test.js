@@ -113,7 +113,52 @@ describe('HashSet', function () {
         otherSet.count().should.equal(hashset.count());
     });
 
+    it('should add a range of elements', function () {
+        var count, data = ["a", "b", "c"],
+            special = {
+                getHashCode: function () { return "a"; },
+                equal: function (other) { if (other === "a") return true; }
+            },
+            hashset = new jsHash.HashSet()
 
+        count = hashset.addRange(data);
+        count.should.equal(3);
+        hashset.count().should.equal(3);
+        hashset.get("a").should.equal("a");
+
+        hashset.clear();
+        count = hashset.addRange(data, false);
+        count.should.equal(3);
+        hashset.count().should.equal(3);
+        hashset.get("a").should.equal("a");
+
+        data.push(special);
+        hashset.clear();
+        count = hashset.addRange(data, true);
+        count.should.equal(4);
+        hashset.count().should.equal(3);
+    });
+
+    it('should union two HashSets using the static method', function () {
+        var hashset1 = new jsHash.HashSet(),
+            hashset2 = new jsHash.HashSet(),
+            special = {
+                getHashCode: function () { return "a"; },
+                equal: function (other) { if (other === "a") return true; }
+            }, result;
+
+        hashset1.add("a");
+        hashset2.add("c");
+        result = jsHash.HashSet.union(hashset1, hashset2);
+        should.exist(result);
+        result.count().should.equal(2);
+        result.get("a").should.equal("a");
+        result.get("c").should.equal("c");
+        hashset2.add(special);
+        result = jsHash.HashSet.union(hashset1, hashset2, {}, true);
+        result.count().should.equal(2);
+        result.get("c").should.equal("c");
+    });
 
 
 });
