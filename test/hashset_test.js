@@ -160,5 +160,55 @@ describe('HashSet', function () {
         result.get("c").should.equal("c");
     });
 
+    it('should intersect two HashSets using the static method', function () {
+        var hashset1 = new jsHash.HashSet(),
+            hashset2 = new jsHash.HashSet(),
+            result;
+        hashset1.add("a");
+        hashset1.add("e");
+
+        hashset2.add("a");
+        hashset2.add("c");
+
+        result = jsHash.HashSet.intersection(hashset1, hashset2);
+        should.exist(result);
+        result.count().should.equal(1);
+        result.get("a").should.equal("a");
+    });
+
+    it('should calculate the difference of two HashSets using the static method', function () {
+        var hashset1 = new jsHash.HashSet(),
+            hashset2 = new jsHash.HashSet(),
+            result;
+        hashset1.add("a");
+        hashset1.add("e");
+
+        hashset2.add("a");
+        hashset2.add("c");
+
+        result = jsHash.HashSet.difference(hashset1, hashset2);
+        should.exist(result);
+        result.count().should.equal(1);
+        result.get("e").should.equal("e");
+    });
+
+    it('should calculate the symmetric difference of two HashSets using the static method', function () {
+        var hashset1 = new jsHash.HashSet(),
+            hashset2 = new jsHash.HashSet(),
+            result;
+        hashset1.add("a");
+        hashset1.add("e");
+
+        hashset2.add("a");
+        hashset2.add("c");
+
+        result = jsHash.HashSet.symmetricDifference(hashset1, hashset2);
+        should.exist(result);
+        result.count().should.equal(2);
+        result.get("e").should.equal("e");
+        result.get("c").should.equal("c");
+    });
+
+
 
 });

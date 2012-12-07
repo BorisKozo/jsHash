@@ -157,8 +157,8 @@ var HashTable = (function () {
 
     ///Creates a new HashTable which is an intersection of the first and second HashTables. You may specify an optional options parameter and
     ///an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
-    ///overwriteIfExists is used to add the elements to the resulting arrangement that might have different options (see the add function for details).
-    ///In any case the key-value pairs from the first HashTable will be in the result.
+    ///overwriteIfExists is used to add the elements to the resulting HashTable that might have different options (see the add function for details).
+    ///In any case the key-value pairs from the first HashTable are in the result.
     HashTable.intersection = function (first, second, options, overwriteIfExists) {
         var firstLength = first.count(),
             secondLength = second.count(),
@@ -186,8 +186,8 @@ var HashTable = (function () {
 
     ///Creates a new HashTable which is the difference of the first and second HashTables (i.e. all the key-value pairs which are in the first HashTable but not in the second HashTable). 
     ///You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
-    ///overwriteIfExists is used to add the elements to the resulting arrangement that might have different options (see the add function for details).
-    ///In any case the key-value pairs from the first HashTable will be in the result.
+    ///overwriteIfExists is used to add the elements to the resulting HashTable that might have different options (see the add function for details).
+    ///In any case the key-value pairs from the first HashTable are in the result.
     HashTable.difference = function (first, second, options, overwriteIfExists) {
         var i, length, keyValuePairs, result = new HashTable(options), pair;
         keyValuePairs = first.getKeyValuePairs();
@@ -207,8 +207,7 @@ var HashTable = (function () {
     ///Creates a new HashTable which is the symmetric difference of the first and second HashTables (i.e. all the key-value pairs which are in the first HashTable but not in the second HashTable 
     //or in the second HashTable but not in the first). 
     ///You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
-    ///overwriteIfExists is used to add the elements to the resulting arrangement that might have different options (see the add function for details).
-    ///In any case the key-value pairs from the first HashTable will be in the result.
+    ///overwriteIfExists is used to add the elements to the resulting HashTable that might have different options (see the add function for details).
     HashTable.symmetricDifference = function (first, second, options, overwriteIfExists) {
         var i, length, keyValuePairs, result = new HashTable(options), pair;
         keyValuePairs = first.getKeyValuePairs();
@@ -527,6 +526,86 @@ var HashSet = (function () {
 
         return result;
     };
+
+    ///Creates a new HashSet which is an intersection of the first and second HashSets. You may specify an optional options parameter and
+    ///an optional overwriteIfExists parameter. The options are used to create the result HashSet and all the keys are added accordingly.
+    ///overwriteIfExists is used to add the elements to the resulting HashSet that might have different options (see the add function for details).
+    ///In any case the keys from the first HashSet are in the result.
+    HashSet.intersection = function (first, second, options, overwriteIfExists) {
+        var firstLength = first.count(),
+            secondLength = second.count(),
+            result, i, keys, tempKey;
+        result = new HashSet(options);
+        if (firstLength < secondLength) {
+            keys = first.getKeys();
+            for (i = 0; i < firstLength; i += 1) {
+                tempKey = keys[i];
+                if (second.contains(tempKey)) {
+                    result.add(tempKey, overwriteIfExists);
+                }
+            }
+        } else {
+            keys = second.getKeys();
+            for (i = 0; i < secondLength; i += 1) {
+                tempKey = first.get(keys[i]);
+                if (tempKey !== null) {
+                    result.add(tempKey, overwriteIfExists);
+                }
+            }
+        }
+
+        return result;
+    };
+
+    ///Creates a new HashSet which is the difference of the first and second HashSets (i.e. all the keys which are in the first HashSet but not in the second HashSet). 
+    ///You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashSet and all the keys are added accordingly.
+    ///overwriteIfExists is used to add the elements to the resulting HashSet that might have different options (see the add function for details).
+    ///In any case the keys from the first HashSet are in the result.
+    HashSet.difference = function (first, second, options, overwriteIfExists) {
+        var i, length, keys, result = new HashSet(options), tempKey;
+        keys = first.getKeys();
+        length = first.count();
+
+        for (i = 0; i < length; i += 1) {
+            tempKey = keys[i];
+            if (!second.contains(tempKey)) {
+                result.add(tempKey, overwriteIfExists);
+            }
+        }
+
+        return result;
+    };
+
+
+    ///Creates a new HashSet which is the symmetric difference of the first and second HashSets (i.e. all the keys which are in the first HashSet but not in the second HashSet 
+    //or in the second HashSet but not in the first). 
+    ///You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashSet and all the keys are added accordingly.
+    ///overwriteIfExists is used to add the elements to the resulting HashSet that might have different options (see the add function for details).
+    HashSet.symmetricDifference = function (first, second, options, overwriteIfExists) {
+        var i, length, keys, result = new HashSet(options), tempKey;
+        keys = first.getKeys();
+        length = first.count();
+
+        for (i = 0; i < length; i += 1) {
+            tempKey = keys[i];
+            if (!second.contains(tempKey)) {
+                result.add(tempKey, overwriteIfExists);
+            }
+        }
+
+        keys = second.getKeys();
+        length = second.count();
+
+        for (i = 0; i < length; i += 1) {
+            tempKey = keys[i];
+            if (!first.contains(tempKey)) {
+                result.add(tempKey, false);
+            }
+        }
+
+        return result;
+    };
+
 
     //Prototype functions
 
