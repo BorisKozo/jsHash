@@ -211,4 +211,54 @@ describe('HashTable', function () {
         result.get("a").value.should.equal("e");
         result.get("c").value.should.equal("d");
     });
+
+    it('should intersect two HashTables using the static method', function () {
+        var hashtable1 = new jsHash.HashTable(),
+            hashtable2 = new jsHash.HashTable(),
+            result;
+        hashtable1.add("a", "b");
+        hashtable1.add("e", "f");
+
+        hashtable2.add("a", "b");
+        hashtable2.add("c", "d");
+
+        result = jsHash.HashTable.intersection(hashtable1, hashtable2);
+        should.exist(result);
+        result.count().should.equal(1);
+        result.get("a").value.should.equal("b");
+    });
+
+    it('should calculate the difference of two HashTables using the static method', function () {
+        var hashtable1 = new jsHash.HashTable(),
+            hashtable2 = new jsHash.HashTable(),
+            result;
+        hashtable1.add("a", "b");
+        hashtable1.add("e", "f");
+
+        hashtable2.add("a", "b");
+        hashtable2.add("c", "d");
+
+        result = jsHash.HashTable.difference(hashtable1, hashtable2);
+        should.exist(result);
+        result.count().should.equal(1);
+        result.get("e").value.should.equal("f");
+    });
+
+    it('should calculate the symmetric difference of two HashTables using the static method', function () {
+        var hashtable1 = new jsHash.HashTable(),
+            hashtable2 = new jsHash.HashTable(),
+            result;
+        hashtable1.add("a", "b");
+        hashtable1.add("e", "f");
+
+        hashtable2.add("a", "ff");
+        hashtable2.add("c", "d");
+
+        result = jsHash.HashTable.symmetricDifference(hashtable1, hashtable2);
+        should.exist(result);
+        result.count().should.equal(2);
+        result.get("e").value.should.equal("f");
+        result.get("c").value.should.equal("d");
+    });
+
 });

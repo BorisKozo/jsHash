@@ -1,13 +1,13 @@
 {
     "name": "hashes",
-	"version" : "0.1.1",
+	"version" : "0.1.2",
     "description": "A package implementing a HashTable and HashSet",
     "author": "Boris Kozorovitzky",
 	"main":"hashes.js",
 	"keywords":[
 		"hashtable",
 		"datastructures",
-		"hash","hash table"
+		"hash","hash table","hashset", "set"
 	],
 	"homepage":"https://github.com/BorisKozo/jsHash",
 	"repository" : { 

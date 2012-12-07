@@ -87,7 +87,24 @@ Returns the number of key-value pairs that were added to the HashTable.
 * **[static] union(first, second, [options], [overwriteIfExists])** - Creates a new HashTable which is a union of the first and second HashTables. 
 You may specify an optional _options_ parameter and an optional _overwriteIfExists_ parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
 When _overwriteIfExists_ is true and a key from the second HashTable already exists in the first HashTable the entire key-value pair is overwritten in the result. 
-If _overwriteIfExists_ is false then the key-value pair from the second HashTable is ignored.
+If _overwriteIfExists_ is false then the key-value pair from the second HashTable is ignored. In any case the key-value pairs from the first HashTable will be in the result.
+
+* **[static] intersection(first, second, [options], [overwriteIfExists])** - Creates a new HashTable which is an intersection of the first and second HashTables. 
+You may specify an optional _options_ parameter and an optional _overwriteIfExists_ parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+When _overwriteIfExists_ is true and a key from the second HashTable already exists in the first HashTable the entire key-value pair is overwritten in the result. 
+If _overwriteIfExists_ is false then the key-value pair from the second HashTable is ignored. In any case the key-value pairs from the first HashTable will be in the result.
+
+* **[static] difference(first, second, [options], [overwriteIfExists])** - Creates a new HashTable which is the difference of the first and second HashTables (i.e. all the key-value pairs which are in the first HashTable but not in the second HashTable). 
+You may specify an optional _options_ parameter and an optional _overwriteIfExists_ parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+When _overwriteIfExists_ is true and a key from the second HashTable already exists in the first HashTable the entire key-value pair is overwritten in the result. 
+If _overwriteIfExists_ is false then the key-value pair from the second HashTable is ignored.    
+
+* **[static] symmetricDifference(first, second, [options], [overwriteIfExists])** - Creates a new HashTable which is the symmetric difference of the first and second HashTables (i.e. all the key-value pairs which are in the first HashTable but not in the second HashTable 
+or in the second HashTable but not in the first). 
+You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+When _overwriteIfExists_ is true and a key from the second HashTable already exists in the first HashTable the entire key-value pair is overwritten in the result. 
+If _overwriteIfExists_ is false then the key-value pair from the second HashTable is ignored. In any case the key-value pairs from the first HashTable will be in the result.
+
 
 ###HashSet
 To create a new HashSet use the _new_ keyword:
@@ -147,6 +164,10 @@ The module uses [Mocha](http://visionmedia.github.com/mocha/) testing framework 
 ```mocha``` in a command line while in the module main directory.
 
 ## ChangeLog
+0.1.1 -> 0.1.2
+
+* Added intersection, difference and symmetricDiffrence functions
+
 0.1.0 -> 0.1.1
 
 * Added the addRange functions

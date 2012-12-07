@@ -79,7 +79,7 @@ var statics = (function () {
             }
 
             var result = {};
-            if (options.hasOwnProperty("getHashCode")){
+            if (options.hasOwnProperty("getHashCode")) {
                 result.getHashCode = options.getHashCode;
             }
             if (options.hasOwnProperty("equal")) {
@@ -155,6 +155,84 @@ var HashTable = (function () {
         return result;
     };
 
+    ///Creates a new HashTable which is an intersection of the first and second HashTables. You may specify an optional options parameter and
+    ///an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+    ///overwriteIfExists is used to add the elements to the resulting arrangement that might have different options (see the add function for details).
+    ///In any case the key-value pairs from the first HashTable will be in the result.
+    HashTable.intersection = function (first, second, options, overwriteIfExists) {
+        var firstLength = first.count(),
+            secondLength = second.count(),
+            result, i, keyValuePairs, tempPair;
+        result = new HashTable(options);
+        if (firstLength < secondLength) {
+            keyValuePairs = first.getKeyValuePairs();
+            for (i = 0; i < firstLength; i += 1) {
+                if (second.contains(keyValuePairs[i].key)) {
+                    result.add(keyValuePairs[i].key, keyValuePairs[i].value, overwriteIfExists);
+                }
+            }
+        } else {
+            keyValuePairs = second.getKeyValuePairs();
+            for (i = 0; i < secondLength; i += 1) {
+                tempPair = first.get(keyValuePairs[i].key);
+                if (tempPair !== null) {
+                    result.add(tempPair.key, tempPair.value, overwriteIfExists);
+                }
+            }
+        }
+
+        return result;
+    };
+
+    ///Creates a new HashTable which is the difference of the first and second HashTables (i.e. all the key-value pairs which are in the first HashTable but not in the second HashTable). 
+    ///You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+    ///overwriteIfExists is used to add the elements to the resulting arrangement that might have different options (see the add function for details).
+    ///In any case the key-value pairs from the first HashTable will be in the result.
+    HashTable.difference = function (first, second, options, overwriteIfExists) {
+        var i, length, keyValuePairs, result = new HashTable(options), pair;
+        keyValuePairs = first.getKeyValuePairs();
+        length = first.count();
+
+        for (i = 0; i < length; i += 1) {
+            pair = keyValuePairs[i];
+            if (!second.contains(pair.key, pair.value)) {
+                result.add(pair.key, pair.value, overwriteIfExists);
+            }
+        }
+
+        return result;
+    };
+
+
+    ///Creates a new HashTable which is the symmetric difference of the first and second HashTables (i.e. all the key-value pairs which are in the first HashTable but not in the second HashTable 
+    //or in the second HashTable but not in the first). 
+    ///You may specify an optional options parameter and an optional overwriteIfExists parameter. The options are used to create the result HashTable and all the key-value pairs are added accordingly.
+    ///overwriteIfExists is used to add the elements to the resulting arrangement that might have different options (see the add function for details).
+    ///In any case the key-value pairs from the first HashTable will be in the result.
+    HashTable.symmetricDifference = function (first, second, options, overwriteIfExists) {
+        var i, length, keyValuePairs, result = new HashTable(options), pair;
+        keyValuePairs = first.getKeyValuePairs();
+        length = first.count();
+
+        for (i = 0; i < length; i += 1) {
+            pair = keyValuePairs[i];
+            if (!second.contains(pair.key, pair.value)) {
+                result.add(pair.key, pair.value, overwriteIfExists);
+            }
+        }
+
+        keyValuePairs = second.getKeyValuePairs();
+        length = second.count();
+
+        for (i = 0; i < length; i += 1) {
+            pair = keyValuePairs[i];
+            if (!first.contains(pair.key, pair.value)) {
+                result.add(pair.key, pair.value, false);
+            }
+        }
+
+        return result;
+    };
 
     //Prototype functions
 
