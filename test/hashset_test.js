@@ -139,6 +139,27 @@ describe('HashSet', function () {
         hashset.count().should.equal(3);
     });
 
+    it('should allow an object with hashCode and equal defined on its prototype', function() {
+        var klass, hashset = new jsHash.HashSet();
+
+        klass = function(val) {
+            this.val = val;
+        };
+
+        klass.prototype.getHashCode = function() {
+            return this.val;
+        };
+
+        klass.prototype.equal = function(other) {
+            return this.val === other.val;
+        };
+
+        hashset.add(new klass(5));
+
+        hashset.contains(new klass(5)).should.equal(true);
+        hashset.contains(new klass(4)).should.equal(false);
+    });
+
     it('should union two HashSets using the static method', function () {
         var hashset1 = new jsHash.HashSet(),
             hashset2 = new jsHash.HashSet(),

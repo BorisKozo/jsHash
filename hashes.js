@@ -65,7 +65,7 @@ var statics = (function () {
                 return options.equal;
             } else {
                 if (key.equal !== undefined && typeof (key.equal) === "function") {
-                    return key.equal;
+                    return function(other, unused) { return key.equal(other); };
                 } else {
                     return statics.defaultEqual;
                 }
