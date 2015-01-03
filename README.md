@@ -180,6 +180,11 @@ The module uses [Mocha](http://visionmedia.github.com/mocha/) testing framework 
 ```mocha``` in a command line while in the module main directory.
 
 ## ChangeLog
+0.1.2 -> 0.1.3
+
+* Added a command to run the tests ```npm test```
+* Fixed incorrect equal method that was returned if key already had an equal method. (Thanks @bgeihsgt)
+
 0.1.1 -> 0.1.2
 
 * Added static intersection, difference and symmetricDiffrence functions to both HashTable and HashSet
