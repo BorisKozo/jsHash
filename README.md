@@ -176,7 +176,7 @@ Thanks!
 
 
 ## Test
-The module uses [Mocha](http://visionmedia.github.com/mocha/) testing framework for all the tests. To run the tests simply type
+The module uses [Mocha](http://mochajs.org/) testing framework for all the tests. To run the tests simply type
 ```mocha``` in a command line while in the module main directory.
 
 ## ChangeLog
